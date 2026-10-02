@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import type { CreateQuizPayload, QuestionType } from '@/types/quiz';
 
+/** Same limit the API applies to expected answers and option texts. */
+const MAX_ANSWER_LENGTH = 200;
+const TOO_LONG_MESSAGE = `Keep it under ${MAX_ANSWER_LENGTH} characters`;
+
 /**
  * The form keeps one flat shape for every question so that switching a question's type
  * never loses what was typed. Only the fields relevant to the selected type are validated.
@@ -26,12 +30,15 @@ const questionFormSchema = z
       });
     }
 
-    if (question.type === 'input' && !question.inputAnswer.trim()) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['inputAnswer'],
-        message: 'Enter the expected answer',
-      });
+    if (question.type === 'input') {
+      const answer = question.inputAnswer.trim();
+      if (!answer || answer.length > MAX_ANSWER_LENGTH) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['inputAnswer'],
+          message: answer ? TOO_LONG_MESSAGE : 'Enter the expected answer',
+        });
+      }
     }
 
     if (question.type === 'checkbox') {
@@ -43,11 +50,12 @@ const questionFormSchema = z
         });
       }
       question.options.forEach((option, index) => {
-        if (!option.text.trim()) {
+        const text = option.text.trim();
+        if (!text || text.length > MAX_ANSWER_LENGTH) {
           ctx.addIssue({
             code: 'custom',
             path: ['options', index, 'text'],
-            message: 'Enter the option text',
+            message: text ? TOO_LONG_MESSAGE : 'Enter the option text',
           });
         }
       });

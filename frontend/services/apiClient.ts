@@ -15,7 +15,8 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
   try {
     response = await fetch(`${API_URL}${path}`, {
       ...init,
-      headers: { 'Content-Type': 'application/json', ...init?.headers },
+      // Only requests with a body need it; on a GET it would force a needless CORS preflight.
+      headers: init?.body ? { 'Content-Type': 'application/json', ...init.headers } : init?.headers,
     });
   } catch {
     // Network failures and CORS rejections are indistinguishable from the browser.

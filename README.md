@@ -62,6 +62,14 @@ npm run dev
 
 Open http://localhost:3000. The root URL redirects to the quiz list.
 
+## Pages
+
+- **`/create`**: quiz builder. Enter a title, add or remove questions of any type, set the correct answers, and save. Fields are validated next to the input before the request is sent.
+- **`/quizzes`**: dashboard with each quiz's title and question count. Each item links to its detail page.
+- **`/quizzes/:id`**: read-only view of the quiz structure, with the correct answers highlighted.
+
+**Deleting a quiz:** clicking the trash icon on the dashboard shows an inline "Delete? ✓ / ✕" confirmation, so a single misclick can't remove a quiz. Confirming calls `DELETE /quizzes/:id` and removes the item from the page without a reload.
+
 ## Database setup
 
 The backend uses SQLite through Sequelize. The file location comes from `DB_STORAGE` in `backend/.env` (default `./data/quiz-builder.sqlite`).
@@ -96,7 +104,7 @@ Pick one of three ways:
 | `DB_STORAGE`  | `./data/quiz-builder.sqlite` | Path to the SQLite file (`:memory:` also works) |
 | `CORS_ORIGIN` | `http://localhost:3000`      | Allowed frontend origin(s), comma-separated     |
 
-When `NODE_ENV` is not `production`, the API also accepts requests from `localhost` and `127.0.0.1` on any port. This matters when `next dev` moves to port 3001 because 3000 is busy. In production, only the origins in `CORS_ORIGIN` are allowed.
+In development (`npm run dev`), the API also accepts requests from `localhost` and `127.0.0.1` on any port. This matters when `next dev` moves to port 3001 because 3000 is busy. `npm start` runs with `NODE_ENV=production`, and then only the origins in `CORS_ORIGIN` are allowed.
 
 **frontend/.env.local**
 
@@ -122,7 +130,7 @@ Question shapes in the `POST /quizzes` body:
 { "type": "checkbox", "text": "...", "options": [{ "text": "...", "isCorrect": true }, ...] }
 ```
 
-Validation rules: the title is required, a quiz needs at least one question, and a multiple-choice question needs 2–10 options with at least one marked correct.
+Validation rules: the title is required (up to 200 characters), and a quiz needs 1–100 questions. Question text can be up to 500 characters; expected answers and option texts up to 200. A multiple-choice question needs 2–10 options with at least one marked correct. The frontend form enforces the same limits.
 
 Errors return JSON as `{ "error", "message", "details?" }`: `400` for validation errors, a bad id or malformed JSON, and `404` for an unknown quiz.
 

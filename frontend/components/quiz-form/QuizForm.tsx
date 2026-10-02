@@ -15,6 +15,8 @@ import { quizService } from '@/services/quizService';
 import { QUESTION_TYPES } from '@/types/quiz';
 import { QuestionFields } from './QuestionFields';
 
+const MAX_QUESTIONS = 100;
+
 export function QuizForm() {
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -78,6 +80,7 @@ export function QuizForm() {
                 key={type}
                 type="button"
                 onClick={() => append(createEmptyQuestion(type))}
+                disabled={fields.length >= MAX_QUESTIONS}
                 className="btn btn-secondary"
               >
                 <PlusIcon /> {QUESTION_TYPE_META[type].label}
