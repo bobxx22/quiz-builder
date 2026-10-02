@@ -1,0 +1,66 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-canvas: #e9eef0;
+  --color-paper: #ffffff;
+  --color-ink: #14212b;
+  --color-muted: #55646f;
+  --color-line: #c6d1d8;
+  --color-brand: #0f5e7a;
+  --color-brand-dark: #0b4a61;
+  --color-correct: #17794a;
+  --color-danger: #b3362b;
+  --color-type-boolean: #3b5bdb;
+  --color-type-input: #8a5a00;
+  --color-type-checkbox: #0f766e;
+  --font-sans:
+    'Avenir Next', 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue',
+    Arial, sans-serif;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply bg-brand text-white hover:bg-brand-dark;
+  }
+  .btn-secondary {
+    @apply border border-line bg-paper text-ink hover:bg-canvas;
+  }
+  .btn-danger {
+    @apply bg-danger text-white hover:opacity-90;
+  }
+
+  .field {
+    @apply w-full rounded-md border border-line bg-paper px-3 py-2 text-base text-ink placeholder:text-muted/70;
+  }
+  .field[aria-invalid='true'] {
+    @apply border-danger;
+  }
+}
