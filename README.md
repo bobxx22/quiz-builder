@@ -96,6 +96,8 @@ Pick one of three ways:
 | `DB_STORAGE`  | `./data/quiz-builder.sqlite` | Path to the SQLite file (`:memory:` also works) |
 | `CORS_ORIGIN` | `http://localhost:3000`      | Allowed frontend origin(s), comma-separated     |
 
+When `NODE_ENV` is not `production`, the API also accepts requests from `localhost` and `127.0.0.1` on any port. This matters when `next dev` moves to port 3001 because 3000 is busy. In production, only the origins in `CORS_ORIGIN` are allowed.
+
 **frontend/.env.local**
 
 | Variable              | Default                 | Description         |

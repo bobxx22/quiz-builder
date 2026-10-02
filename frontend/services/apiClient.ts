@@ -18,7 +18,11 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
       headers: { 'Content-Type': 'application/json', ...init?.headers },
     });
   } catch {
-    throw new ApiError('Cannot reach the server. Check that the backend is running.', 0);
+    // Network failures and CORS rejections are indistinguishable from the browser.
+    throw new ApiError(
+      `Cannot reach the API at ${API_URL}. Check that the backend is running and that its CORS_ORIGIN allows this site.`,
+      0,
+    );
   }
 
   if (response.status === 204) return undefined as T;

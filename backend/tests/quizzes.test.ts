@@ -152,3 +152,23 @@ describe('Quizzes API', () => {
     assert.equal((await api(`/quizzes/${quizId}`, { method: 'DELETE' })).status, 404);
   });
 });
+
+describe('CORS', () => {
+  const allowOriginFor = async (origin: string) =>
+    (await fetch(`${baseUrl}/health`, { headers: { Origin: origin } })).headers.get(
+      'access-control-allow-origin',
+    );
+
+  it('allows the configured frontend origin', async () => {
+    assert.equal(await allowOriginFor('http://localhost:3000'), 'http://localhost:3000');
+  });
+
+  it('allows other localhost ports outside production', async () => {
+    assert.equal(await allowOriginFor('http://localhost:3001'), 'http://localhost:3001');
+    assert.equal(await allowOriginFor('http://127.0.0.1:3000'), 'http://127.0.0.1:3000');
+  });
+
+  it('rejects foreign origins', async () => {
+    assert.equal(await allowOriginFor('http://evil.example'), null);
+  });
+});
